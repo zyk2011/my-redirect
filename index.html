@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具箱 - 多选项跳转导航</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --primary: #1a1a1a;
+            --accent: #d4a853;
+            --accent-light: #f5e7c8;
+            --text: #222;
+            --subtext: #666;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e8e9ed;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .phone-frame {
+            max-width: 400px;
+            width: 100%;
+            background: var(--bg);
+            border-radius: 44px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            padding: 0 0 24px;
+            position: relative;
+        }
+
+        .status-bar {
+            padding: 14px 24px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .status-bar .time {
+            letter-spacing: 0.5px;
+        }
+        .battery {
+            width: 24px;
+            height: 11px;
+            border: 1.5px solid #1a1a1a;
+            border-radius: 3px;
+            padding: 2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .battery::after {
+            content: "";
+            position: absolute;
+            right: -3.5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2.5px;
+            height: 5px;
+            background: #1a1a1a;
+            border-radius: 0 1px 1px 0;
+        }
+        .battery-fill {
+            width: 70%;
+            height: 100%;
+            background: #1a1a1a;
+            border-radius: 1px;
+        }
+
+        .main-content {
+            padding: 8px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .save-tip {
+            text-align: center;
+            font-size: 14px;
+            color: #b8943b;
+            letter-spacing: 1px;
+            font-weight: 500;
+            background: var(--accent-light);
+            padding: 8px 0;
+            border-radius: 30px;
+            margin: 0 10px;
+            box-shadow: 0 2px 6px rgba(212, 168, 83, 0.15);
+        }
+
+        .header-area {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .toolbox-title {
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .welcome-text {
+            font-size: 15px;
+            color: var(--subtext);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .option-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .option-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: #f0f0f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .option-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .option-title {
+            font-weight: 650;
+            font-size: 17px;
+            color: #1e1e1e;
+        }
+        .option-desc {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .arrow-icon {
+            color: #c0c0c0;
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+
+        .option-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #d4a85360;
+            background: #fffef9;
+        }
+        .option-item:hover .arrow-icon {
+            transform: translateX(4px);
+            color: var(--accent);
+        }
+        .option-item:hover .option-icon {
+            background: var(--accent-light);
+            transform: scale(1.04);
+        }
+
+        .option-item:active {
+            transform: scale(0.98);
+            background: #fafafa;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span class="time">12:17</span>
+            <div style="display: flex; gap: 6px; align-items: center;">
+                <span>📶</span>
+                <div class="battery"><div class="battery-fill"></div></div>
+            </div>
+        </div>
+
+        <div class="save-tip">⭐ 【让你天天起飞】</div>
+
+        <div class="main-content">
+            <div class="header-area">
+                <div class="toolbox-title">工具箱</div>
+                <div class="welcome-text">欢迎光临91官方小店</div>
+            </div>
+
+            <!-- 跳转选项列表：点击每个卡片即可跳转 -->
+            <div class="option-list" id="optionContainer">
+                <!-- 选项会通过 JavaScript 动态生成，方便统一修改链接 -->
+            </div>
+
+            <div class="footer-note">点击选项即可跳转</div>
+        </div>
+    </div>
+
+    <!-- ⚠️ 所有跳转链接都在这里修改！只需改动下方 link 后面的网址即可 -->
+    <script>
+        // ========== 🔗 链接配置区（修改这里就能换链接） ==========
+        const navLinks = [
+            {
+                title: "超自然各大辅助下单",
+                desc: "快速通道，安全便捷",
+                icon: "📦",
+                url: "https://your-real-link.com/nl"   // 👈 把这里改成你的 NL 下单链接
+            },
+            {
+                title: "飞机号下单",
+                desc: "Telegram专属服务",
+                icon: "✈️",
+                url: "https://lanlii.com/shop/137891" // 👈 改成飞机号下单链接
+            },
+            {
+                title: "和平各大辅助下单",
+                desc: "高效稳定，品质保障",
+                icon: "⚙️",
+                url: "https://your-real-link.com/jy"   // 👈 改成 JY 引擎下单链接
+            },
+            {
+                title: "加入官方tg:@zyknb91",
+                desc: "最新通知，群内互动",
+                icon: "💬",
+                url: "https://t.me/zyknb91" // 👈 改成官方Q群链接
+            }
+        ];
+        // ========== 链接配置结束 ==========
+
+        // 动态生成选项卡片
+        const container = document.getElementById('optionContainer');
+        navLinks.forEach(item => {
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.target = '_blank';
+            a.className = 'option-item';
+            a.title = item.title;
+            a.innerHTML = `
+                <div class="option-left">
+                    <div class="option-icon">${item.icon}</div>
+                    <div class="option-text">
+                        <span class="option-title">${item.title}</span>
+                        <span class="option-desc">${item.desc}</span>
+                    </div>
+                </div>
+                <span class="arrow-icon">›</span>
+            `;
+            container.appendChild(a);
+        });
+    </script>
+</body>
+</html>
